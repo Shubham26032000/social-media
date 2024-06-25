@@ -2,6 +2,9 @@ package com.shubham.socialmedia.controller;
 
 import com.shubham.socialmedia.entity.User;
 import com.shubham.socialmedia.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,16 +15,22 @@ import java.util.List;
 @RequestMapping("/api")
 public class UserController {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserService userService;
 
     @PostMapping("/saveUser")
     public boolean createUser(@RequestBody User user){
-        return userService.saveUser(user);
+        logger.info("User Data : {}",user);
+        boolean result = userService.saveUser(user);
+        logger.info("is user saved ? {}",result);
+        return result;
     }
 
     @GetMapping("/user/{userId}")
-    public User getUser(@PathVariable Long userId){
+    public User getUser(@PathVariable Long userId, HttpServletRequest httpServletRequest){
+        logger.info("httpServletRequest.UserEmail :: {}",httpServletRequest.getHeader("X-User-Email"));
         User user = userService.findUserById(userId);
 
         return  user;
